@@ -50,35 +50,54 @@ class App extends Component {
 
   render() {
     const style = {
-      backgroundColor: "white",
+      backgroundColor: "green",
+      color: "white",
       font: "inherit",
       border: "1px solid blue",
       padding: "8px",
       cursor: "pointer",
     };
 
+    let persons = null;
+
+    if (this.state.showPersons) {
+      persons = (
+        <div>
+          {this.state.persons.map((person, index) => {
+            return (
+              <Person
+                key={person.id} //Use this identifier in order to deleter the correct person
+                name={person.name}
+                age={person.age}
+                click={() => this.deletePersonHandler(index)}
+                changed={(event) => this.nameChangedHandler(event, person.id)}
+              />
+            );
+          })}
+        </div>
+      );
+
+      style.backgroundColor = "red";
+    }
+
+    //let classes = ['red', 'bold'].join(' ');
+    const classes = [];
+    if (this.state.persons.length <= 1) {
+      classes.push("red");
+    }
+
+    if (this.state.persons.length <= 0) {
+      classes.push("bold");
+    }
+
     return (
       <div className="App">
         <h1>My first React App</h1>
-        <p>This is really working</p>
+        <p className={classes.join(" ")}>This is really working</p>
         <button style={style} onClick={this.togglePersonsHandler}>
           Toggle Persons
         </button>
-        {this.state.showPersons ? (
-          <div>
-            {this.state.persons.map((person, index) => {
-              return (
-                <Person
-                  key={person.id} //Use this identifier in order to deleter the correct person
-                  name={person.name}
-                  age={person.age}
-                  click={() => this.deletePersonHandler(index)}
-                  changed={(event) => this.nameChangedHandler(event, person.id)}
-                />
-              );
-            })}
-          </div>
-        ) : null}
+        {persons}
       </div>
     );
     // The code gets compiled to JavaScript, like below
