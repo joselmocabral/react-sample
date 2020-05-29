@@ -1,6 +1,10 @@
 import React, { Component } from "react";
+
 import Persons from "../components/Persons/Persons";
 import Cockpit from "../components/Cockpit/Cockpit";
+import withClass from "../hoc/withClass";
+import Aux from "../hoc/Aux";
+import AuthContext from "../context/auth-context";
 
 import classes from "./App.css";
 
@@ -22,6 +26,7 @@ class App extends Component {
         },
       ],
       showPersons: false,
+      authenticated: false,
     };
   }
 
@@ -31,15 +36,15 @@ class App extends Component {
   // }
 
   componentDidMount() {
-    console.log('[App.js] Component Did Mount');
+    console.log("[App.js] Component Did Mount");
   }
 
   componentDidUpdate() {
-    console.log('[App.js] Component Did Update');
+    console.log("[App.js] Component Did Update");
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    console.log('[App.js Should Component Update');
+    console.log("[App.js Should Component Update");
     return true;
   }
 
@@ -71,6 +76,11 @@ class App extends Component {
     });
   }; // This handler toggles the visibility of the list of persons based on the showPersons bool
 
+  loginHandler = () => {
+    this.setState({ authenticated: true });
+    console.log('[LOGGIN IN]');
+  };
+
   render() {
     let persons = null;
 
@@ -87,14 +97,21 @@ class App extends Component {
     //let classes = ['red', 'bold'].join(' ');
 
     return (
-      <div className={classes.App}>
-        <Cockpit
-          showPersons={this.state.showPersons}
-          personsLength={this.state.persons.length}
-          clicked={this.togglePersonsHandler}
-        />
-        {persons}
-      </div>
+      <Aux>
+        <AuthContext.Provider
+          value={{
+            authenticated: this.state.authenticated,
+            login: this.loginHandler
+          }}
+        >
+          <Cockpit
+            showPersons={this.state.showPersons}
+            personsLength={this.state.persons.length}
+            clicked={this.togglePersonsHandler}
+          />
+          {persons}
+        </AuthContext.Provider>
+      </Aux>
     );
     // The code gets compiled to JavaScript, like below
     // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'My first React App'));
@@ -102,4 +119,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withClass(App, classes.App);
